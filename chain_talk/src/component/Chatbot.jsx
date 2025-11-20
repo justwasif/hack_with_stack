@@ -310,7 +310,7 @@ const CONTRACT_ABI =[
 	}
 ]
 const CONTRACT_ADDRESS = "0x270D811e692DCD363Bf604e324351645Fb6D9C05";
-//const GROQ_API_KEY = "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";
+
 
 const WIKI_URL = "wikipedia.org";
 
