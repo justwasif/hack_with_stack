@@ -1,6 +1,6 @@
-export const GROQ_API_KEY = "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";
-export const CONTRACT_ADDRESS = "0x3025cdaf19828333a36FA67E3D1617426C3bF92F";
-export const CONTRACT_ABI = [
+
+export const CONTRACT_ADDRESS = "0x270D811e692DCD363Bf604e324351645Fb6D9C05";
+export const CONTRACT_ABI =[
 	{
 		"inputs": [],
 		"stateMutability": "nonpayable",
@@ -307,4 +307,4 @@ export const CONTRACT_ABI = [
 		"stateMutability": "view",
 		"type": "function"
 	}
-]
+] 

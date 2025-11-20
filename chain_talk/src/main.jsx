@@ -7,6 +7,7 @@ import Layout from './component/Layout.jsx'
 import RegisterSite from './component/RegisterSite.jsx'
 import Chatbot from './component/Chatbot.jsx'
 import History from './component/History.jsx'
+import { WalletProvider } from './context/WalletContext.jsx'
 
 
 const router=createBrowserRouter(
@@ -25,7 +26,9 @@ const router=createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router}/>
+    <WalletProvider>
+      <RouterProvider router={router}/>
+    </WalletProvider>
   </StrictMode>,
 )
 
