@@ -166,7 +166,7 @@ export default function History() {
             
         </div>
         <div className="flex items-center justify-center gap-4 mb-3">
-          <p className="text-xl text-purple-200">Browse all blockchain-recorded Wikipedia queries</p>
+          <p className="text-xl text-purple-200">Browse all blockchain-recorded queries</p>
         </div>
 
           {/* Not Connected State */}
