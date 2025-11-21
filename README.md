@@ -19,6 +19,7 @@
 </div>
 
 ## 🌟 What is Chain_Talk?
+site link[https://hack-with-stack-phi.vercel.app/]
 
 Chain_Talk is a revolutionary **Web3-powered AI chatbot** that bridges the gap between traditional web scraping and decentralized compensation. We solve a critical problem: **content creators aren't fairly compensated when their data is scraped**.
 
@@ -288,7 +289,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ## 📞 Contact & Support
 
-- 🌐 **Website**: [chain-talk.xyz](#)
+- 🌐 **Website**: [https://hack-with-stack-phi.vercel.app/](#)
 - 📧 **Email**: wasifpro100@gmail.com
 
 ---
