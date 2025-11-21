@@ -1,9 +1,9 @@
 # hack_with_stack
-# 🦊 Chain_Talk
+#  Chain_Talk
 
 <div align="center">
 
-![Chain_Talk Banner](https://img.shields.io/badge/Hack%20with%20Stack-Hackathon%202024-blueviolet?style=for-the-badge)
+![Chain_Talk Banner](https://img.shields.io/badge/Hack%20with%20Stack-Hackathon%202025-blueviolet?style=for-the-badge)
 ![Ethereum](https://img.shields.io/badge/Ethereum-3C3C3D?style=for-the-badge&logo=Ethereum&logoColor=white)
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![Solidity](https://img.shields.io/badge/Solidity-e6e6e6?style=for-the-badge&logo=solidity&logoColor=black)
@@ -12,7 +12,7 @@
 
 **Built by Team Kabaadi** 🛠️
 
-[Live Demo](#) • [Documentation](#features) • [Report Bug](#) • [Request Feature](#)
+
 
 ---
 
@@ -238,9 +238,9 @@ border: 1px solid rgba(59, 130, 246, 0.2);
 
 | Member | Role | GitHub |
 |:------:|:----:|:------:|
-| **Member 1** | Frontend + Smart Contracts | [@member1](#) |
-| **Member 2** | UI/UX + Integration | [@member2](#) |
-| **Member 3** | AI + Backend Logic | [@member3](#) |
+| **Member 1** | Frontend + Smart Contracts | [@justwasif](#) |
+| **Member 2** | UI/UX + Integration | [@ayushi8463-lgtm](#) |
+| **Member 3** | AI + Backend Logic | [@Ibrahim2750mi](#) |
 
 </div>
 
@@ -249,7 +249,6 @@ border: 1px solid rgba(59, 130, 246, 0.2);
 ## 🔮 Future Roadmap
 
 - [ ] Multi-chain support (Polygon, Arbitrum, Optimism)
-- [ ] Support for more data sources beyond Wikipedia
 - [ ] AI model fine-tuning for better responses
 - [ ] Mobile app (React Native)
 - [ ] Content creator analytics dashboard
@@ -290,9 +289,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 ## 📞 Contact & Support
 
 - 🌐 **Website**: [chain-talk.xyz](#)
-- 📧 **Email**: team.kabaadi@example.com
-- 💬 **Discord**: [Join our community](#)
-- 🐦 **Twitter**: [@ChainTalk](#)
+- 📧 **Email**: wasifpro100@gmail.com
 
 ---
 
@@ -302,25 +299,9 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 **Made with 💜 by Team Kabaadi**
 
-*Hack with Stack Hackathon 2024*
+*Hack with Stack Hackathon 2025*
 
 </div>
-
----
-
-## 📸 Screenshots
-
-### Home Page
-Beautiful landing with animated background and clear call-to-action buttons.
-
-### Chatbot Interface
-Ask questions and get AI-powered responses with automatic blockchain payments.
-
-### Transaction History
-View all past queries with beautiful gradient cards showing payment details.
-
-### Site Registration
-Simple, intuitive interface to register websites and start earning.
 
 ---
 
