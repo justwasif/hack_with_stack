@@ -1,32 +1,28 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { useWallet } from "../context/WalletContext";
+import logo from "@assets/mylogo.png";
 
 export default function Header() {
-    // const connectWallet = async () => {
-    //     if (!window.ethereum) return alert("Install MetaMask!");
-    //     try {
-    //       const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-    //       const provider = new ethers.BrowserProvider(window.ethereum);
-    //       const signer = await provider.getSigner();
-    //       const _contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
-    
-    //       setAccount(accounts[0]);
-    //       setContract(_contract);
-    //       setMessages(prev => [...prev, { from: "system", text: `✅ Connected: ${accounts[0].slice(0,6)}...${accounts[0].slice(-4)}` }]);
-    //     } catch (error) {
-    //       console.error(error);
-    //       alert("Connection failed");
-    //     }
-    //   };
-      
-  const styles = `
-    /* 🦊 Fox Glow Effect */
-    .fox-glow {
-      filter: drop-shadow(0 0 12px rgba(139, 92, 246, 0.5));
-      transition: filter 0.3s ease;
+  const { account, isConnected, connectWallet, disconnectWallet } = useWallet();
+
+  const handleWalletAction = () => {
+    if (isConnected) {
+      disconnectWallet();
+    } else {
+      connectWallet();
     }
-    .fox-glow:hover {
+  };
+
+  const styles = `
+    /* Logo Glow Effect */
+    .logo-glow {
+      filter: drop-shadow(0 0 12px rgba(139, 92, 246, 0.5));
+      transition: filter 0.3s ease, transform 0.3s ease;
+    }
+    .logo-glow:hover {
       filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.8));
+      transform: scale(1.1);
     }
 
     /* 🔗 Navigation Links */
@@ -89,6 +85,30 @@ export default function Header() {
       border-image-source: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
       animation: border-flow 3s ease infinite;
     }
+
+    .wallet-btn {
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .wallet-btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      transform: translate(-50%, -50%);
+      transition: width 0.4s, height 0.4s;
+    }
+    
+    .wallet-btn:hover::before {
+      width: 300px;
+      height: 300px;
+    }
   `;
 
   return (
@@ -99,42 +119,21 @@ export default function Header() {
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             
-            {/* 🦊 Logo + Text */}
+            {/* 🎨 Logo + Text */}
             <div className="flex items-center gap-3">
               <div className="relative">
-                {/* MetaMask Fox (SVG) */}
-                <svg
-                  width="50"
+                <img 
+                  src={logo} 
+                  alt="Chain Talk Logo" 
+                  width="50" 
                   height="50"
-                  viewBox="0 0 200 200"
-                  className="hover:scale-110 transition-transform cursor-pointer fox-glow"
-                >
-                  {/* Fox head */}
-                  <path
-                    d="M100 40 L140 80 L130 100 L140 120 L120 140 L100 130 L80 140 L60 120 L70 100 L60 80 Z"
-                    fill="#8b5cf6"
-                    stroke="#7c3aed"
-                    strokeWidth="2"
-                  />
-                  {/* Inner face */}
-                  <path
-                    d="M100 60 L120 90 L110 110 L100 105 L90 110 L80 90 Z"
-                    fill="#a78bfa"
-                  />
-                  {/* Eyes */}
-                  <circle cx="85" cy="85" r="5" fill="#fff" />
-                  <circle cx="115" cy="85" r="5" fill="#fff" />
-                  <circle cx="87" cy="85" r="2.5" fill="#000" />
-                  <circle cx="117" cy="85" r="2.5" fill="#000" />
-                  {/* Ears */}
-                  <path d="M60 80 L50 50 L70 70 Z" fill="#8b5cf6" />
-                  <path d="M140 80 L150 50 L130 70 Z" fill="#8b5cf6" />
-                  {/* Nose */}
-                  <path d="M100 95 L95 105 L105 105 Z" fill="#000" />
-                </svg>
+                  className="logo-glow cursor-pointer rounded-lg"
+                />
 
                 {/* Online indicator */}
-                <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-gray-900 animate-pulse"></div>
+                {isConnected && (
+                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-gray-900 animate-pulse"></div>
+                )}
               </div>
 
               {/* Chain_Talk Text */}
@@ -197,9 +196,17 @@ export default function Header() {
                 </span>
               </div>
 
-              {/* Connect Wallet button */}
-              <button  className="group relative px-6 py-2.5 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white rounded-full font-semibold text-sm transition-all shadow-lg hover:shadow-2xl hover:shadow-purple-500/50 transform hover:scale-105 overflow-hidden">
-                <span className="relative z-10"></span>
+              {/* Connect/Disconnect Wallet button */}
+              <button 
+                onClick={handleWalletAction}
+                className="wallet-btn group relative px-6 py-2.5 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white rounded-full font-semibold text-sm transition-all shadow-lg hover:shadow-2xl hover:shadow-purple-500/50 transform hover:scale-105 overflow-hidden"
+              >
+                <span className="relative z-10">
+                  {isConnected 
+                    ? `${account.slice(0, 6)}...${account.slice(-4)}` 
+                    : "Connect Wallet"
+                  }
+                </span>
                 <div className="absolute inset-0 bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </button>
             </div>

@@ -189,7 +189,7 @@ export default function RegisterSite() {
           {/* Header */}
           <div className="text-center mb-12 fade-in">
             <div className="flex justify-center mb-6">
-				<img src={logo} alt="logo" width={20} height={20}/>
+				<img src={logo} alt="Chain Talk Logo" className="logo-image" width={200} height={200}/>
 				
               {/* <svg width="100" height="100" viewBox="0 0 200 200" className={isConnected ? "fox-connected" : "float"} style={{filter: 'drop-shadow(0 0 20px rgba(246, 133, 27, 0.6))'}}>
                 <path d="M100 40 L140 80 L130 100 L140 120 L120 140 L100 130 L80 140 L60 120 L70 100 L60 80 Z" fill="#F6851B" stroke="#E2761B" strokeWidth="2" />
@@ -208,7 +208,7 @@ export default function RegisterSite() {
           </div>
 
           {/* Connection Card */}
-          <div className="card-glass rounded-3xl shadow-2xl p-8 fade-in mb-10">
+          {/* <div className="card-glass rounded-3xl shadow-2xl p-8 fade-in mb-10">
             {!isConnected ? (
               <div className="text-center">
                 <p className="text-gray-300 mb-6 text-lg">Connect your MetaMask wallet to begin</p>
@@ -223,17 +223,7 @@ export default function RegisterSite() {
             ) : (
               <div className="flex items-center justify-between bg-gradient-to-r from-green-900/40 to-emerald-900/40 p-6 rounded-2xl border-2 border-green-500/30 fade-in backdrop-blur-sm">
                 <div className="flex items-center gap-4">
-                  <svg width="60" height="60" viewBox="0 0 200 200" className="fox-connected" style={{filter: 'drop-shadow(0 0 15px rgba(34, 197, 94, 0.6))'}}>
-                    <path d="M100 40 L140 80 L130 100 L140 120 L120 140 L100 130 L80 140 L60 120 L70 100 L60 80 Z" fill="#F6851B" stroke="#E2761B" strokeWidth="2" />
-                    <path d="M100 60 L120 90 L110 110 L100 105 L90 110 L80 90 Z" fill="#E4761B" />
-                    <circle className="fox-eye-left" cx="85" cy="85" r="2.5" fill="#000" />
-                    <circle className="fox-eye-right" cx="115" cy="85" r="2.5" fill="#000" />
-                    <circle cx="85" cy="85" r="5" fill="#fff" />
-                    <circle cx="115" cy="85" r="5" fill="#fff" />
-                    <path className="fox-ear-left" d="M60 80 L50 50 L70 70 Z" fill="#F6851B" />
-                    <path className="fox-ear-right" d="M140 80 L150 50 L130 70 Z" fill="#F6851B" />
-                    <path d="M100 95 L95 105 L105 105 Z" fill="#000" />
-                  </svg>
+				  <img src={logo} alt="Chain Talk Logo" className="logo-image" width={70} height={70}/>
                   <div>
                     <p className="text-sm text-gray-400 font-semibold">Connected Wallet</p>
                     <p className="text-lg font-mono font-bold text-green-400">{account.slice(0,6)}...{account.slice(-4)}</p>
@@ -242,7 +232,7 @@ export default function RegisterSite() {
                 <div className="flex items-center text-green-400 font-bold text-lg pulse-effect">✅ Connected</div>
               </div>
             )}
-          </div>
+          </div> */}
 
           {/* Action Card */}
           {isConnected && (

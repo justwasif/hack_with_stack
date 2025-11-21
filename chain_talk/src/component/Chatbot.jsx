@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useWallet } from "../context/WalletContext";
+import logo from "@assets/mylogo.png";
+import chatbot from '@assets/chatobt.png';
 
 // Get Groq API key from Vite environment variables
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 const WIKI_URL = "wikipedia.org";
 
 export default function Chatbot() {
-  // USE global wallet context (no local wallet logic)
   const { account, contract, connectWallet } = useWallet();
 
   const [messages, setMessages] = useState([]);
@@ -14,10 +15,8 @@ export default function Chatbot() {
   const [loading, setLoading] = useState(false);
   const chatRef = useRef(null);
 
-  // Auto-scroll to bottom when messages change
   useEffect(() => {
     if (chatRef.current) {
-      // smooth scroll to bottom
       chatRef.current.scrollTo({
         top: chatRef.current.scrollHeight,
         behavior: "smooth",
@@ -53,8 +52,13 @@ export default function Chatbot() {
   const sendTransaction = async (topic, dataSize) => {
     if (!contract) throw new Error("Contract not available. Make sure wallet is connected.");
     const siteData = await contract.sites(WIKI_URL);
+    
+    console.log("Checking site registration for:", WIKI_URL);
+    console.log("Site data:", siteData);
+    console.log("Is registered:", siteData.isRegistered);
+    
     if (!siteData.isRegistered) {
-      throw new Error("Wikipedia not registered. Please register first.");
+      throw new Error(`Wikipedia not registered. Please register "${WIKI_URL}" first (exact URL match required).`);
     }
 
     const fee = BigInt(dataSize) * BigInt("100000000000000");
@@ -104,7 +108,6 @@ export default function Chatbot() {
     setInput("");
   };
 
-  // --- animation & style CSS restored from your original file ---
   const styles = `
     @keyframes fadeIn { 
       from { opacity: 0; transform: translateY(20px); } 
@@ -146,6 +149,11 @@ export default function Chatbot() {
       50% { opacity: 0.5; }
     }
 
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
     .fade-in { animation: fadeIn 0.8s ease-out; }
     .float { animation: float 3s ease-in-out infinite; }
     .spin { animation: spin 1s linear infinite; }
@@ -153,6 +161,7 @@ export default function Chatbot() {
     .slide-in-left { animation: slideIn 0.5s ease-out; }
     .slide-in-right { animation: slideInRight 0.5s ease-out; }
     .pulse-dot { animation: pulse 1.5s ease-in-out infinite; }
+    .animate-pulseGlow { animation: pulseGlow 2s ease-in-out infinite; }
 
     .btn-hover { 
       transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
@@ -205,11 +214,12 @@ export default function Chatbot() {
       background: rgba(17, 24, 39, 0.7);
     }
 
-    .metamask-logo { 
-      width: 50px; 
-      height: 50px; 
+    .logo-image { 
+      width: 60px; 
+      height: 60px; 
       animation: float 3s ease-in-out infinite;
-      filter: drop-shadow(0 0 10px rgba(246, 133, 27, 0.5));
+      filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.5));
+      border-radius: 12px;
     }
     
     .wave-line {
@@ -257,53 +267,32 @@ export default function Chatbot() {
       <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-black pointer-events-none"></div>
 
       <div className="flex flex-col items-center min-h-screen relative z-10 text-white p-4">
-        <h1 className="text-5xl font-bold mb-2 fade-in bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mt-8">
-          AI Chatbot
-        </h1>
+		<div className="flex items-center justify-center gap-6 mb-6">
+			<img src={chatbot} alt="Chain Talk Logo" className="w-22 h-22 md:w-28 md:h-20 sm:w-20 sm:h-20"/>
+			<h1 className="text-5xl md:text-4xl sm:text-3xl font-bold fade-in bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+          		AI Chatbot
+        	</h1>
+		</div>
+       
         <p className="text-gray-400 mb-8 fade-in text-lg">Positive Scraper 👁️‍🗨️</p>
 
-        {/* Connect Wallet */}
-        {!account && (
-          <button
-            onClick={connectWallet}
-            className="mb-8 px-10 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl font-semibold shadow-lg btn-hover fade-in flex items-center justify-center gap-3 glow-effect"
-          >
-            {loading ? (
-              <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full spin"></div>
-            ) : (
-              <>
-                <span className="relative z-10">Connect Wallet</span>
-              </>
-            )}
-          </button>
-        )}
+						{/* Connect Wallet */}
+						{/* {!account && (
+						<button
+							onClick={connectWallet}
+							className="mb-8 px-10 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl font-semibold shadow-lg btn-hover fade-in flex items-center justify-center gap-3 glow-effect"
+						>
+							{loading ? (
+							<div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full spin"></div>
+							) : (
+							<>
+								<span className="relative z-10">Connect Wallet</span>
+							</>
+							)}
+						</button>
+						)} */}
 
-        {account && (
-  <div className="relative mb-8 fade-in">
-    {/* Glowing animated border */}
-    <div className="absolute inset-0 rounded-3xl p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 animate-pulseGlow"></div>
-
-    <div className="relative flex items-center gap-4 bg-gray-900/60 border border-blue-500/30 rounded-3xl px-6 py-4 backdrop-blur-xl shadow-xl">
-      <svg viewBox="0 0 200 200" className="metamask-logo">
-        <path d="M100 40 L140 80 L130 100 L140 120 L120 140 L100 130 L80 140 L60 120 L70 100 L60 80 Z" fill="#F6851B" stroke="#E2761B" strokeWidth="2" />
-        <path d="M100 60 L120 90 L110 110 L100 105 L90 110 L80 90 Z" fill="#E4761B" />
-        <circle cx="85" cy="85" r="2.5" fill="#000" />
-        <circle cx="115" cy="85" r="2.5" fill="#000" />
-        <circle cx="85" cy="85" r="5" fill="#fff" />
-        <circle cx="115" cy="85" r="5" fill="#fff" />
-        <path d="M60 80 L50 50 L70 70 Z" fill="#F6851B" />
-        <path d="M140 80 L150 50 L130 70 Z" fill="#F6851B" />
-        <path d="M100 95 L95 105 L105 105 Z" fill="#000" />
-      </svg>
-
-      <p className="font-semibold text-lg">
-        <span className="text-gray-400">Connected:</span>{" "}
-        <span className="text-blue-400">{account.slice(0,6)}...{account.slice(-4)}</span>
-      </p>
-    </div>
-  </div>
-)}
-
+				{/* yaha vo ayega  */}
 
         <div
           ref={chatRef}
@@ -339,7 +328,7 @@ export default function Chatbot() {
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => e.key === "Enter" && handleSend()}
-            placeholder="Ask something about Wikipedia..."
+            placeholder="Ask anything :) ..."
             className="flex-1 p-5 rounded-2xl text-white border border-blue-500/30 input-glow transition-all text-lg"
           />
           <button

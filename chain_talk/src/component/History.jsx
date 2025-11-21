@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { useWallet } from "../context/WalletContext";
+import logo from "@assets/mylogo.png";
 
 const SITE_URL = "wikipedia.org";
 
@@ -149,12 +150,24 @@ export default function History() {
 
         <div className="max-w-6xl mx-auto relative z-10">
           {/* Header */}
-          <div className="text-center mb-12 fade-in">
+          <div className="flex items-center justify-center gap-4 mb-3">
             <h1 className="text-6xl font-bold text-white mb-3 glow-text">
-              Fetch History <span className="text-5xl">📜</span>
+              Fetch History
             </h1>
-            <p className="text-xl text-purple-200">Browse all blockchain-recorded Wikipedia queries</p>
-          </div>
+            
+            <img
+              src={logo}
+              alt="Chain Talk Logo"
+                        className="w-48 h-48 md:w-36 md:h-36 sm:w-24 sm:h-24"
+            />
+            
+            
+                     
+            
+        </div>
+        <div className="flex items-center justify-center gap-4 mb-3">
+          <p className="text-xl text-purple-200">Browse all blockchain-recorded Wikipedia queries</p>
+        </div>
 
           {/* Not Connected State */}
           {!isConnected ? (
