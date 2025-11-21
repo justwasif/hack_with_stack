@@ -1,356 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { ethers } from "ethers";
-
-const CONTRACT_ABI =[
-	{
-		"inputs": [],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "url",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "topic",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "dataScraped",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amountPaid",
-				"type": "uint256"
-			}
-		],
-		"name": "DataScraped",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_siteUrl",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_topic",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "dataScraped",
-				"type": "uint256"
-			}
-		],
-		"name": "fetchInfo",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "user",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "site",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "topic",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amountPaid",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "timestamp",
-				"type": "uint256"
-			}
-		],
-		"name": "InfoFetched",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_url",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_topic",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "dataAmount",
-				"type": "uint256"
-			}
-		],
-		"name": "logScrapedData",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_url",
-				"type": "string"
-			}
-		],
-		"name": "registerSite",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "url",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "wallet",
-				"type": "address"
-			}
-		],
-		"name": "SiteRegistered",
-		"type": "event"
-	},
-	{
-		"inputs": [],
-		"name": "chatbotOwner",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "fetchHistory",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "user",
-				"type": "address"
-			},
-			{
-				"internalType": "string",
-				"name": "topic",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "timestamp",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amountPaid",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "dataScraped",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_siteUrl",
-				"type": "string"
-			}
-		],
-		"name": "getFetchHistory",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "address",
-						"name": "user",
-						"type": "address"
-					},
-					{
-						"internalType": "string",
-						"name": "topic",
-						"type": "string"
-					},
-					{
-						"internalType": "uint256",
-						"name": "timestamp",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "amountPaid",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "dataScraped",
-						"type": "uint256"
-					}
-				],
-				"internalType": "struct InfoAccessV3.FetchRecord[]",
-				"name": "",
-				"type": "tuple[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "MIN_FEE",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"name": "sites",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "url",
-				"type": "string"
-			},
-			{
-				"internalType": "address payable",
-				"name": "wallet",
-				"type": "address"
-			},
-			{
-				"internalType": "bool",
-				"name": "isRegistered",
-				"type": "bool"
-			},
-			{
-				"internalType": "uint256",
-				"name": "totalEarned",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "totalDataScraped",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	}
-]
-const CONTRACT_ADDRESS = "0x270D811e692DCD363Bf604e324351645Fb6D9C05";
+import React, { useState } from "react";
+import { useWallet } from "../context/WalletContext";
+//import logo from "@/assets/mylogo.png";
+import logo from "@assets/mylogo.png"
 
 export default function RegisterSite() {
+  const { account, contract, isConnected, connectWallet } = useWallet();
   const [url, setUrl] = useState("");
-  const [contract, setContract] = useState(null);
-  const [connected, setConnected] = useState(false);
-  const [walletAddress, setWalletAddress] = useState("");
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (window.ethereum) {
-      window.ethereum.on('accountsChanged', (accounts) => {
-        if (accounts.length === 0) {
-          setConnected(false);
-          setWalletAddress("");
-          setContract(null);
-        }
-      });
-    }
-  }, []);
-
-  async function connect() {
-    if (!window.ethereum) return alert("Install MetaMask first!");
-    setLoading(true);
-    try {
-      const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-      const acc = accounts[0];
-
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-      const _contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
-
-      setContract(_contract);
-      setConnected(true);
-      setWalletAddress(acc);
-      setStatus("✅ Connected to MetaMask");
-    } catch (err) {
-      setStatus("❌ Connection failed: " + err.message);
-    }
-    setLoading(false);
-  }
 
   async function register() {
     if (!url.trim() || !contract) return;
@@ -532,7 +189,9 @@ export default function RegisterSite() {
           {/* Header */}
           <div className="text-center mb-12 fade-in">
             <div className="flex justify-center mb-6">
-              <svg width="100" height="100" viewBox="0 0 200 200" className={connected ? "fox-connected" : "float"} style={{filter: 'drop-shadow(0 0 20px rgba(246, 133, 27, 0.6))'}}>
+				<img src={logo} alt="logo" width={20} height={20}/>
+				
+              {/* <svg width="100" height="100" viewBox="0 0 200 200" className={isConnected ? "fox-connected" : "float"} style={{filter: 'drop-shadow(0 0 20px rgba(246, 133, 27, 0.6))'}}>
                 <path d="M100 40 L140 80 L130 100 L140 120 L120 140 L100 130 L80 140 L60 120 L70 100 L60 80 Z" fill="#F6851B" stroke="#E2761B" strokeWidth="2" />
                 <path d="M100 60 L120 90 L110 110 L100 105 L90 110 L80 90 Z" fill="#E4761B" />
                 <circle className="fox-eye-left" cx="85" cy="85" r="2.5" fill="#000" />
@@ -542,7 +201,7 @@ export default function RegisterSite() {
                 <path className="fox-ear-left" d="M60 80 L50 50 L70 70 Z" fill="#F6851B" />
                 <path className="fox-ear-right" d="M140 80 L150 50 L130 70 Z" fill="#F6851B" />
                 <path d="M100 95 L95 105 L105 105 Z" fill="#000" />
-              </svg>
+              </svg> */}
             </div>
             <h1 className="text-6xl font-bold mb-4 shimmer-text">Register Your Site</h1>
             <p className="text-xl text-gray-400">Secure your site on the Ethereum blockchain 🌐</p>
@@ -550,11 +209,11 @@ export default function RegisterSite() {
 
           {/* Connection Card */}
           <div className="card-glass rounded-3xl shadow-2xl p-8 fade-in mb-10">
-            {!connected ? (
+            {!isConnected ? (
               <div className="text-center">
                 <p className="text-gray-300 mb-6 text-lg">Connect your MetaMask wallet to begin</p>
                 <button
-                  onClick={connect}
+                  onClick={connectWallet}
                   disabled={loading}
                   className="px-10 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl font-semibold text-lg btn glow-effect relative overflow-hidden"
                 >
@@ -577,7 +236,7 @@ export default function RegisterSite() {
                   </svg>
                   <div>
                     <p className="text-sm text-gray-400 font-semibold">Connected Wallet</p>
-                    <p className="text-lg font-mono font-bold text-green-400">{walletAddress.slice(0,6)}...{walletAddress.slice(-4)}</p>
+                    <p className="text-lg font-mono font-bold text-green-400">{account.slice(0,6)}...{account.slice(-4)}</p>
                   </div>
                 </div>
                 <div className="flex items-center text-green-400 font-bold text-lg pulse-effect">✅ Connected</div>
@@ -586,7 +245,7 @@ export default function RegisterSite() {
           </div>
 
           {/* Action Card */}
-          {connected && (
+          {isConnected && (
             <div className="card-glass rounded-3xl shadow-2xl p-8 fade-in">
               <input
                 type="text"
@@ -598,14 +257,14 @@ export default function RegisterSite() {
               <div className="flex gap-4 mb-6">
                 <button 
                   onClick={register} 
-                  disabled={!connected || loading || !url.trim()} 
+                  disabled={!isConnected || loading || !url.trim()} 
                   className="flex-1 px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-2xl font-semibold text-lg btn relative overflow-hidden"
                 >
                   <span className="relative z-10">Register Site</span>
                 </button>
                 <button 
                   onClick={checkSite} 
-                  disabled={!connected || loading || !url.trim()} 
+                  disabled={!isConnected || loading || !url.trim()} 
                   className="flex-1 px-6 py-4 bg-gradient-to-r from-purple-600 to-purple-500 text-white rounded-2xl font-semibold text-lg btn relative overflow-hidden"
                 >
                   <span className="relative z-10">Check Site</span>

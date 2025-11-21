@@ -1,345 +1,35 @@
-import React, { useState } from "react";
-import { ethers } from "ethers";
+import React, { useState, useEffect, useRef } from "react";
+import { useWallet } from "../context/WalletContext";
 
-
-const CONTRACT_ABI =[
-	{
-		"inputs": [],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "url",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "topic",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "dataScraped",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amountPaid",
-				"type": "uint256"
-			}
-		],
-		"name": "DataScraped",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_siteUrl",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_topic",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "dataScraped",
-				"type": "uint256"
-			}
-		],
-		"name": "fetchInfo",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "user",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "site",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "topic",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amountPaid",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "timestamp",
-				"type": "uint256"
-			}
-		],
-		"name": "InfoFetched",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_url",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_topic",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "dataAmount",
-				"type": "uint256"
-			}
-		],
-		"name": "logScrapedData",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_url",
-				"type": "string"
-			}
-		],
-		"name": "registerSite",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "url",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "wallet",
-				"type": "address"
-			}
-		],
-		"name": "SiteRegistered",
-		"type": "event"
-	},
-	{
-		"inputs": [],
-		"name": "chatbotOwner",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "fetchHistory",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "user",
-				"type": "address"
-			},
-			{
-				"internalType": "string",
-				"name": "topic",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "timestamp",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amountPaid",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "dataScraped",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_siteUrl",
-				"type": "string"
-			}
-		],
-		"name": "getFetchHistory",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "address",
-						"name": "user",
-						"type": "address"
-					},
-					{
-						"internalType": "string",
-						"name": "topic",
-						"type": "string"
-					},
-					{
-						"internalType": "uint256",
-						"name": "timestamp",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "amountPaid",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "dataScraped",
-						"type": "uint256"
-					}
-				],
-				"internalType": "struct InfoAccessV3.FetchRecord[]",
-				"name": "",
-				"type": "tuple[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "MIN_FEE",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"name": "sites",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "url",
-				"type": "string"
-			},
-			{
-				"internalType": "address payable",
-				"name": "wallet",
-				"type": "address"
-			},
-			{
-				"internalType": "bool",
-				"name": "isRegistered",
-				"type": "bool"
-			},
-			{
-				"internalType": "uint256",
-				"name": "totalEarned",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "totalDataScraped",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	}
-]
-const CONTRACT_ADDRESS = "0x270D811e692DCD363Bf604e324351645Fb6D9C05";
-
-
+// Get Groq API key from Vite environment variables
+const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 const WIKI_URL = "wikipedia.org";
 
 export default function Chatbot() {
+  // USE global wallet context (no local wallet logic)
+  const { account, contract, connectWallet } = useWallet();
+
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [account, setAccount] = useState(null);
-  const [contract, setContract] = useState(null);
+  const chatRef = useRef(null);
 
-  const connectWallet = async () => {
-    if (!window.ethereum) return alert("Install MetaMask!");
-    try {
-      const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-      const _contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
-
-      setAccount(accounts[0]);
-      setContract(_contract);
-      setMessages(prev => [...prev, { from: "system", text: `✅ Connected: ${accounts[0].slice(0,6)}...${accounts[0].slice(-4)}` }]);
-    } catch (error) {
-      console.error(error);
-      alert("Connection failed");
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    if (chatRef.current) {
+      // smooth scroll to bottom
+      chatRef.current.scrollTo({
+        top: chatRef.current.scrollHeight,
+        behavior: "smooth",
+      });
     }
-  };
+  }, [messages, loading]);
 
   const fetchFromGroq = async (query) => {
+    if (!GROQ_API_KEY) {
+      throw new Error("Groq API key not found. Please check your .env file.");
+    }
+
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -361,6 +51,7 @@ export default function Chatbot() {
   };
 
   const sendTransaction = async (topic, dataSize) => {
+    if (!contract) throw new Error("Contract not available. Make sure wallet is connected.");
     const siteData = await contract.sites(WIKI_URL);
     if (!siteData.isRegistered) {
       throw new Error("Wikipedia not registered. Please register first.");
@@ -390,15 +81,15 @@ export default function Chatbot() {
         try {
           const dataSize = Math.floor(answer.length / 10);
           const txHash = await sendTransaction(input, dataSize);
-          setMessages(prev => [...prev, { 
-            from: "bot", 
-            text: `${answer}\n\n` 
+          setMessages(prev => [...prev, {
+            from: "bot",
+            text: `${answer}\n\n✅ Transaction confirmed: ${txHash.slice(0, 10)}...`
           }]);
         } catch (txErr) {
           console.error(txErr);
-          setMessages(prev => [...prev, { 
-            from: "bot", 
-            text: `${answer}\n\n❌ Payment failed: ${txErr.message}` 
+          setMessages(prev => [...prev, {
+            from: "bot",
+            text: `${answer}\n\n❌ Payment failed: ${txErr.message}`
           }]);
         }
       } else {
@@ -413,6 +104,7 @@ export default function Chatbot() {
     setInput("");
   };
 
+  // --- animation & style CSS restored from your original file ---
   const styles = `
     @keyframes fadeIn { 
       from { opacity: 0; transform: translateY(20px); } 
@@ -552,7 +244,7 @@ export default function Chatbot() {
   return (
     <div className="min-h-screen bg-black relative overflow-hidden">
       <style>{styles}</style>
-      
+
       {/* Animated background waves */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="wave-line" style={{top: '20%', animationDelay: '0s'}}></div>
@@ -560,16 +252,17 @@ export default function Chatbot() {
         <div className="wave-line" style={{top: '60%', animationDelay: '2s'}}></div>
         <div className="wave-line" style={{top: '80%', animationDelay: '3s'}}></div>
       </div>
-      
+
       {/* Gradient overlays */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-black pointer-events-none"></div>
-      
+
       <div className="flex flex-col items-center min-h-screen relative z-10 text-white p-4">
         <h1 className="text-5xl font-bold mb-2 fade-in bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mt-8">
           AI Chatbot
         </h1>
         <p className="text-gray-400 mb-8 fade-in text-lg">Positive Scraper 👁️‍🗨️</p>
 
+        {/* Connect Wallet */}
         {!account && (
           <button
             onClick={connectWallet}
@@ -586,25 +279,36 @@ export default function Chatbot() {
         )}
 
         {account && (
-          <div className="flex items-center gap-4 mb-8 fade-in">
-            <svg viewBox="0 0 200 200" className="metamask-logo">
-              <path d="M100 40 L140 80 L130 100 L140 120 L120 140 L100 130 L80 140 L60 120 L70 100 L60 80 Z" fill="#F6851B" stroke="#E2761B" strokeWidth="2" />
-              <path d="M100 60 L120 90 L110 110 L100 105 L90 110 L80 90 Z" fill="#E4761B" />
-              <circle cx="85" cy="85" r="2.5" fill="#000" />
-              <circle cx="115" cy="85" r="2.5" fill="#000" />
-              <circle cx="85" cy="85" r="5" fill="#fff" />
-              <circle cx="115" cy="85" r="5" fill="#fff" />
-              <path d="M60 80 L50 50 L70 70 Z" fill="#F6851B" />
-              <path d="M140 80 L150 50 L130 70 Z" fill="#F6851B" />
-              <path d="M100 95 L95 105 L105 105 Z" fill="#000" />
-            </svg>
-            <p className="font-semibold text-lg">
-              <span className="text-gray-400">Connected:</span> <span className="text-blue-400">{account.slice(0,6)}...{account.slice(-4)}</span>
-            </p>
-          </div>
-        )}
+  <div className="relative mb-8 fade-in">
+    {/* Glowing animated border */}
+    <div className="absolute inset-0 rounded-3xl p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 animate-pulseGlow"></div>
 
-        <div className="w-full max-w-3xl chat-container rounded-3xl shadow-2xl p-6 h-[60vh] overflow-y-auto fade-in">
+    <div className="relative flex items-center gap-4 bg-gray-900/60 border border-blue-500/30 rounded-3xl px-6 py-4 backdrop-blur-xl shadow-xl">
+      <svg viewBox="0 0 200 200" className="metamask-logo">
+        <path d="M100 40 L140 80 L130 100 L140 120 L120 140 L100 130 L80 140 L60 120 L70 100 L60 80 Z" fill="#F6851B" stroke="#E2761B" strokeWidth="2" />
+        <path d="M100 60 L120 90 L110 110 L100 105 L90 110 L80 90 Z" fill="#E4761B" />
+        <circle cx="85" cy="85" r="2.5" fill="#000" />
+        <circle cx="115" cy="85" r="2.5" fill="#000" />
+        <circle cx="85" cy="85" r="5" fill="#fff" />
+        <circle cx="115" cy="85" r="5" fill="#fff" />
+        <path d="M60 80 L50 50 L70 70 Z" fill="#F6851B" />
+        <path d="M140 80 L150 50 L130 70 Z" fill="#F6851B" />
+        <path d="M100 95 L95 105 L105 105 Z" fill="#000" />
+      </svg>
+
+      <p className="font-semibold text-lg">
+        <span className="text-gray-400">Connected:</span>{" "}
+        <span className="text-blue-400">{account.slice(0,6)}...{account.slice(-4)}</span>
+      </p>
+    </div>
+  </div>
+)}
+
+
+        <div
+          ref={chatRef}
+          className="w-full max-w-3xl chat-container rounded-3xl shadow-2xl p-6 h-[60vh] overflow-y-auto fade-in"
+        >
           {messages.map((msg, idx) => (
             <div
               key={idx}
@@ -619,6 +323,7 @@ export default function Chatbot() {
               {msg.text}
             </div>
           ))}
+
           {loading && (
             <div className="flex items-center gap-3 mt-4">
               <div className="w-3 h-3 bg-blue-500 rounded-full pulse-dot"></div>

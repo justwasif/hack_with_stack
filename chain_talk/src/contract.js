@@ -1,5 +1,5 @@
 
-export const CONTRACT_ADDRESS = "0x270D811e692DCD363Bf604e324351645Fb6D9C05";
+export const CONTRACT_ADDRESS = "0xECA3F977c29e5ccE0fFdcd95dFC7B266dE14866c";
 export const CONTRACT_ABI =[
 	{
 		"inputs": [],
@@ -307,4 +307,4 @@ export const CONTRACT_ABI =[
 		"stateMutability": "view",
 		"type": "function"
 	}
-] 
+]

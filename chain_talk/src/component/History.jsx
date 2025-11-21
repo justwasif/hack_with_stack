@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import { CONTRACT_ABI, CONTRACT_ADDRESS } from "../contract";
+import { useWallet } from "../context/WalletContext";
 
 const SITE_URL = "wikipedia.org";
 
 export default function History() {
+  const { contract, isConnected, connectWallet } = useWallet();
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const loadHistory = async () => {
-    if (!window.ethereum) return alert("Install MetaMask first!");
-    await window.ethereum.request({ method: "eth_requestAccounts" });
+    if (!contract) {
+      setLoading(false);
+      return;
+    }
 
     try {
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
-
       const history = await contract.getFetchHistory(SITE_URL);
 
       const formatted = history.map((r) => {
@@ -36,14 +36,17 @@ export default function History() {
       setLoading(false);
     } catch (err) {
       console.error("Error loading history:", err);
-      alert("Failed to load history.");
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadHistory();
-  }, []);
+    if (isConnected && contract) {
+      loadHistory();
+    } else {
+      setLoading(false);
+    }
+  }, [isConnected, contract]);
 
   const vibrantColors = [
     'from-pink-500 to-fuchsia-600',
@@ -107,6 +110,31 @@ export default function History() {
       border-color: #a855f7;
       border-top-color: transparent;
     }
+    .btn-connect {
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-connect::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    .btn-connect:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+    .btn-connect:hover {
+      transform: scale(1.08) translateY(-2px);
+      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.4);
+    }
   `;
 
   return (
@@ -128,8 +156,20 @@ export default function History() {
             <p className="text-xl text-purple-200">Browse all blockchain-recorded Wikipedia queries</p>
           </div>
 
-          {/* Loading State */}
-          {loading ? (
+          {/* Not Connected State */}
+          {!isConnected ? (
+            <div className="bg-slate-900 bg-opacity-60 backdrop-blur-lg rounded-3xl shadow-2xl border border-purple-500 border-opacity-30 p-12 text-center fade-in">
+              <div className="text-7xl mb-6">🔒</div>
+              <h3 className="text-3xl font-bold text-white mb-4">Connect Your Wallet</h3>
+              <p className="text-purple-200 text-lg mb-8">Please connect your wallet to view transaction history</p>
+              <button
+                onClick={connectWallet}
+                className="px-10 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl font-semibold text-lg btn-connect relative overflow-hidden"
+              >
+                <span className="relative z-10">Connect Wallet</span>
+              </button>
+            </div>
+          ) : loading ? (
             <div className="bg-slate-900 bg-opacity-60 backdrop-blur-lg rounded-3xl shadow-2xl border border-purple-500 border-opacity-30 p-12 text-center fade-in">
               <div className="flex justify-center mb-4">
                 <div className="w-16 h-16 border-4 rounded-full spinner"></div>
